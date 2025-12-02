@@ -5,6 +5,7 @@ import { useState } from "react";
 import { Oval } from "react-loader-spinner";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
+import { convertTime } from "./utils/utils";
 
 import "./index.css";
 
@@ -136,19 +137,24 @@ function App() {
                                 <li>
                                     Last Check:{" "}
                                     {historyData
-                                        ? historyData.last_check
+                                        ? convertTime(historyData.last_check)
                                         : "..."}
                                 </li>
                                 <li>
                                     Last Down:{" "}
                                     {historyData
-                                        ? historyData.last_down_time
+                                        ? convertTime(
+                                              historyData.last_down_time
+                                          )
                                         : "..."}
                                 </li>
                                 <li>
                                     Last Down Duration:
                                     {historyData
-                                        ? historyData.last_down_duration
+                                        ? `${Math.floor(
+                                              historyData.last_down_duration /
+                                                  60000
+                                          )} minutes`
                                         : "..."}
                                 </li>
                             </ul>
