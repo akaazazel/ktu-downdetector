@@ -7,8 +7,9 @@ import "dotenv/config";
 import { serverDown, serverUp, readDB } from "./utils/db.js";
 
 const webUrl = process.env.KTU_URL;
+const originUrl = process.env.ORIGIN_URL;
 const app = express();
-app.use(cors({ origin: "http://localhost:5173" }));
+app.use(cors({ origin: originUrl }));
 
 const agent = new https.Agent({
     rejectUnauthorized: false,
