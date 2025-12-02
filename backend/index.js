@@ -1,12 +1,14 @@
 import express from "express";
 import axios from "axios";
 import https from "https";
+import cors from "cors";
 import "dotenv/config";
 
 import { serverDown, serverUp, readDB } from "./utils/db.js";
 
 const webUrl = process.env.KTU_URL;
 const app = express();
+app.use(cors({ origin: "http://localhost:5173" }));
 
 const agent = new https.Agent({
     rejectUnauthorized: false,
