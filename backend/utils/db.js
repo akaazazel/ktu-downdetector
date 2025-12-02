@@ -1,0 +1,52 @@
+import { Redis } from "@upstash/redis";
+import "dotenv/config";
+
+export const redis = new Redis({
+    url: process.env.UPSTASH_REDIS_REST_URL,
+    token: process.env.UPSTASH_REDIS_REST_TOKEN,
+});
+
+export const serverDown = async () => {
+    try {
+        await redis.set("uptime:last_down_time", Date.now());
+        await redis.set("uptime:last_check", Date.now());
+    } catch (err) {
+        console.log("Can't connect to Database!");
+    }
+};
+
+export const serverUp = async () => {
+    try {
+        await redis.set("uptime:last_check", Date.now());
+
+        const lastDown = await redis.get("uptime:last_down_time");
+        const duration = Date.now() - lastDown;
+
+        await redis.set("uptime:last_down_duration", duration);
+    } catch (err) {
+        console.log("Can't connect to Database!");
+    }
+};
+
+export const readDB = async () => {
+    try {
+        const lastDownTime = await redis.get("uptime:last_down_time");
+        const lastDownDuration = await redis.get("uptime:last_down_duration");
+        const lastCheck = await redis.get("uptime:last_check");
+
+        return {
+            last_down_time: lastDownTime,
+            last_down_duration: lastDownDuration,
+            last_check: lastCheck,
+        };
+    } catch (err) {
+        console.log("Can't connect to Database!");
+        return {
+            last_down_time: null,
+            last_down_duration: null,
+            last_check: null,
+        };
+    }
+};
+
+export default readDB;
