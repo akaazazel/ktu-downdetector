@@ -2,6 +2,11 @@ import { useEffect } from "react";
 
 import { checkUrl, getHistory } from "./api/api";
 import { useState } from "react";
+import { Oval } from "react-loader-spinner";
+import Skeleton from "react-loading-skeleton";
+import "react-loading-skeleton/dist/skeleton.css";
+
+import "./index.css";
 
 function App() {
     const [down, setDown] = useState(true);
@@ -9,6 +14,8 @@ function App() {
     const [historyData, setHistoryData] = useState(null);
     const [history, setHistory] = useState(false);
     const [historyChecked, setHistoryChecked] = useState(false);
+
+    const loaderComp = <Skeleton width={50} height={20} />;
 
     useEffect(() => {
         const fetchData = async () => {
@@ -35,38 +42,97 @@ function App() {
     };
 
     return (
-        <div>
-            <h1>Downdetector</h1>
-            <div>
-                <div>
+        <div className="container">
+            <h1 className="title">Downdetector</h1>
+            <div className="content">
+                <div className="header">
                     {data ? (
-                        <>
-                            <h2>OK</h2>
-                            <p>KTU website is ok</p>
-                        </>
+                        <h2>OK</h2>
                     ) : (
-                        "..."
+                        <Skeleton
+                            width={50}
+                            height={20}
+                            baseColor="rgba(255, 255, 255, 0.50)"
+                            highlightColor="rgba(255, 255, 255, 0.75)"
+                        />
+                    )}
+                    {data ? (
+                        <p>KTU website is ok</p>
+                    ) : (
+                        <Skeleton
+                            width={100}
+                            height={20}
+                            baseColor="rgba(255, 255, 255, 0.50)"
+                            highlightColor="rgba(255, 255, 255, 0.75)"
+                        />
                     )}
                 </div>
-                <div>
-                    <ul>
-                        <li>Status: {data ? data.status : "..."}</li>
-                        <li>
-                            Status Text:{" "}
-                            {data
-                                ? data.statusText !== ""
-                                    ? data.statusText
-                                    : "Unknown"
-                                : "..."}
-                        </li>
-                        <li>Latency: {data ? data.latency : "..."} ms</li>
+
+                <div className="body">
+                    <ul className="status">
+                        {data ? (
+                            <LabelComponent
+                                label={"Code"}
+                                value={data.status}
+                            />
+                        ) : (
+                            <Skeleton
+                                width={50}
+                                height={15}
+                                baseColor="rgba(255, 255, 255, 0.50)"
+                                highlightColor="rgba(255, 255, 255, 0.75)"
+                            />
+                        )}
+                        {data ? (
+                            data.statusText !== "" ? (
+                                <LabelComponent
+                                    label={"Status Text"}
+                                    value={data.statusText}
+                                />
+                            ) : (
+                                <LabelComponent
+                                    label={"Status Text"}
+                                    value={"Unknown"}
+                                />
+                            )
+                        ) : (
+                            <Skeleton
+                                width={50}
+                                height={15}
+                                baseColor="rgba(255, 255, 255, 0.50)"
+                                highlightColor="rgba(255, 255, 255, 0.75)"
+                            />
+                        )}
+                        {data ? (
+                            <LabelComponent
+                                label={"Latency"}
+                                value={data.latency}
+                            />
+                        ) : (
+                            <Skeleton
+                                width={50}
+                                height={15}
+                                baseColor="rgba(255, 255, 255, 0.50)"
+                                highlightColor="rgba(255, 255, 255, 0.75)"
+                            />
+                        )}
                     </ul>
                 </div>
-                <div>
-                    <button onClick={handleHistoryChecked}>History</button>
+
+                <div className="history">
+                    <button
+                        className={
+                            history
+                                ? "history-button round-border"
+                                : "history-button"
+                        }
+                        onClick={handleHistoryChecked}
+                    >
+                        {history ? "" : "History"}
+                    </button>
                     {history && (
-                        <div>
-                            <ul>
+                        <div className="history-body">
+                            <ul className="history-data">
                                 <li>
                                     Last Check:{" "}
                                     {historyData
@@ -93,5 +159,14 @@ function App() {
         </div>
     );
 }
+
+const LabelComponent = ({ label, value }) => {
+    return (
+        <p className="status-label">
+            {`${label}:`}{" "}
+            <span>{`${value} ${label === "Latency" ? "ms" : ""}`}</span>
+        </p>
+    );
+};
 
 export default App;
