@@ -44,7 +44,7 @@ function App() {
 
     return (
         <div className="container">
-            <h1 className="title">Downdetector</h1>
+            <h1 className="title">KTU Downdetector</h1>
             <div className="content">
                 <div className="header">
                     {data ? (
@@ -129,7 +129,7 @@ function App() {
                         }
                         onClick={handleHistoryChecked}
                     >
-                        {history ? "" : "History"}
+                        {history ? "X" : "History"}
                     </button>
                     {history && (
                         <div className="history-body">
