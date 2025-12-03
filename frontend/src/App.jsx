@@ -1,14 +1,8 @@
 import { useEffect } from "react";
-
-import { checkUrl, getHistory } from "./api/api";
 import { useState } from "react";
-import Skeleton from "react-loading-skeleton";
-import "react-loading-skeleton/dist/skeleton.css";
-import { convertTime } from "./utils/utils";
 
 import { useMediaQuery } from "react-responsive";
 
-import "./index.css";
 import {
     VStack,
     Text,
@@ -19,8 +13,14 @@ import {
     Button,
     Link,
     Image,
+    Skeleton,
 } from "@chakra-ui/react";
 import { CircleX, CircleCheck, ListRestart } from "lucide-react";
+
+import { checkUrl, getHistory } from "./api/api";
+import { convertTime } from "./utils/utils";
+import "./index.css";
+import { GiLargeDress } from "react-icons/gi";
 
 function App() {
     const [down, setDown] = useState(1);
@@ -62,6 +62,29 @@ function App() {
     const borderRadius = "3xl";
     const padding = isMobile ? "15px 25px" : "20px 40px";
 
+    const primarySkeletonColor = down ? "red.600" : "green.600";
+
+    const largeSkeleton = (
+        <Skeleton
+            width={100}
+            height={8}
+            opacity={0}
+            bgColor={"white"}
+            accentColor={"red"}
+            variant={"pulse"}
+        />
+    );
+    const mediumSkeleton = (
+        <Skeleton
+            width={200}
+            height={5}
+            opacity={0}
+            bgColor={"white"}
+            accentColor={"red"}
+            variant={"pulse"}
+        />
+    );
+
     return (
         <VStack paddingTop={10} gap={4}>
             <Image width={isMobile ? 260 : 360} src="logo.svg" />
@@ -79,10 +102,12 @@ function App() {
                         direction={isMobile && "column"}
                     >
                         <Text fontSize={titleSize} fontWeight={"bold"}>
-                            {down ? "DOWN!" : "OK!"}
+                            {data ? (down ? "DOWN!" : "OK!") : largeSkeleton}
                         </Text>
                         <Text fontSize={mediumFont} fontWeight={"normal"}>
-                            {`The website is ${down ? "down" : "up"}!`}
+                            {data
+                                ? `The website is ${down ? "down" : "up"}!`
+                                : mediumSkeleton}
                         </Text>
                     </Stack>
                 </Box>
