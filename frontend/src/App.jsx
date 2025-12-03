@@ -7,11 +7,11 @@ import "react-loading-skeleton/dist/skeleton.css";
 import { convertTime } from "./utils/utils";
 
 import "./index.css";
-import { VStack, Text, Box, HStack, Icon } from "@chakra-ui/react";
-import { CircleX, CircleCheck } from "lucide-react";
+import { VStack, Text, Box, HStack, Icon, Button } from "@chakra-ui/react";
+import { CircleX, CircleCheck, ListRestart } from "lucide-react";
 
 function App() {
-    const [down, setDown] = useState(0);
+    const [down, setDown] = useState(1);
     const [data, setData] = useState(null);
     const [historyData, setHistoryData] = useState(null);
     const [history, setHistory] = useState(false);
@@ -79,21 +79,76 @@ function App() {
                     padding={"20px 40px"}
                     width={width}
                 >
-                    <StatusData
-                        title={"Status Code"}
-                        value={data ? data.code : "--"}
-                        down={down}
-                    />
-                    <StatusData
-                        title={"Message"}
-                        value={data ? data.statusText : "--"}
-                        down={down}
-                    />
-                    <StatusData
-                        title={"Latency"}
-                        value={`${data ? data.latency : "--"} ms`}
-                        down={down}
-                    />
+                    <VStack align={"start"}>
+                        <StatusData
+                            title={"Status Code"}
+                            value={data ? data.code : "--"}
+                            down={down}
+                        />
+                        <StatusData
+                            title={"Message"}
+                            value={data ? data.statusText : "--"}
+                            down={down}
+                        />
+                        <StatusData
+                            title={"Latency"}
+                            value={`${data ? data.latency : "--"} ms`}
+                            down={down}
+                        />
+                    </VStack>
+                </Box>
+                <Box
+                    background={"blue.100"}
+                    // color={"gray.fg"}
+                    borderRadius={borderRadius}
+                    padding={"20px 40px"}
+                    width={width}
+                    position={"relative"}
+                >
+                    <VStack align={"start"}>
+                        <HistoryData
+                            title={"Last check"}
+                            value={
+                                historyData
+                                    ? `${Math.floor(
+                                          (Date.now() -
+                                              historyData.last_check) /
+                                              60000
+                                      )} minutes ago`
+                                    : "--"
+                            }
+                        />
+                        <HistoryData
+                            title={"Last down time"}
+                            value={
+                                historyData
+                                    ? convertTime(historyData.last_down_time)
+                                    : "--"
+                            }
+                        />
+                        <HistoryData
+                            title={"Last down duration"}
+                            value={
+                                historyData
+                                    ? `${Math.floor(
+                                          historyData.last_down_duration / 60000
+                                      )} minutes`
+                                    : "--"
+                            }
+                        />
+                    </VStack>
+                    <Button
+                        onClick={handleHistoryChecked}
+                        borderRadius={borderRadius}
+                        position={"absolute"}
+                        top={3}
+                        right={3}
+                        background={"blue.200"}
+                    >
+                        <Icon color={"blue.800"}>
+                            <ListRestart />
+                        </Icon>
+                    </Button>
                 </Box>
             </VStack>
         </VStack>
@@ -112,6 +167,28 @@ const StatusData = ({ title, value, down }) => {
                     {down ? <CircleX /> : <CircleCheck />}
                 </Icon>
                 <Text fontSize={"lg"} fontWeight={"bold"} paddingBottom={1}>
+                    {value}
+                </Text>
+            </HStack>
+        </HStack>
+    );
+};
+
+const HistoryData = ({ title, value }) => {
+    return (
+        <HStack color={"gray.emphasized"}>
+            <Text fontSize={"sm"} fontWeight={"normal"}>
+                {`${title}:`}
+            </Text>
+
+            <HStack>
+                {/* <Icon
+                    size={"md"}
+                    color={down ? "gray.emphasized" : "green.solid"}
+                >
+                    {down ? <CircleX /> : <CircleCheck />}
+                </Icon> */}
+                <Text fontSize={"sm"} fontWeight={"medium"}>
                     {value}
                 </Text>
             </HStack>
