@@ -1,95 +1,13 @@
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-    text-decoration: none;
-    list-style: none;
+:root {
+    --background-color: #ebf8ff;
+    --primary-green: #48bb78;
+    --secondary-green: #c6f6d5;
+    --primary-red: #e53e3e;
+    --secondary-red: #fed7d7;
+    --font-family: "JetBrains Mono";
 }
 
 body {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: rgb(90, 90, 90);
-    color: white;
-    font-family: "JetBrains Mono";
-    font-size: 12px;
-}
-
-.container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin-top: 50px;
-    gap: 10px;
-}
-
-.container {
-    width: 320px;
-}
-
-.header {
-    display: flex;
-    padding: 20px;
-    align-items: center;
-    justify-content: space-between;
-    background-color: rgba(15, 227, 0, 0.691);
-    border-radius: 10px 10px 0 0;
-    width: 300px;
-}
-
-.body {
-    background-color: rgb(18, 18, 18);
-    /* border: 1px solid rgb(55, 55, 55); */
-    border-radius: 0 0 10px 0;
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
-
-.status {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    width: 100%;
-}
-
-.status-label span {
-    background-color: white;
-    color: rgb(0, 0, 0);
-    padding: 1px 8px;
-    border-radius: 50px;
-}
-
-.history-button {
-    padding: 5px 10px;
-    background-color: rgb(18, 18, 18);
-    color: white;
-    border: none;
-    border-radius: 0 0 10px 10px;
-    width: 80px;
-    height: 30px;
-}
-
-.round-border {
-    border-radius: 0 0 0 0;
-}
-
-.history-body {
-    background-color: rgb(18, 18, 18);
-    padding: 20px;
-    border-radius: 0 10px 10px 10px;
-}
-
-.history-data {
-    font-size: 10px;
-    color: rgb(180, 180, 180);
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
-
-.down {
-    background-color: rgb(174, 0, 0);
+    background-color: var(--background-color);
+    color: black;
 }

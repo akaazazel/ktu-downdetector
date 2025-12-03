@@ -2,12 +2,13 @@ import { useEffect } from "react";
 
 import { checkUrl, getHistory } from "./api/api";
 import { useState } from "react";
-import { Oval } from "react-loader-spinner";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import { convertTime } from "./utils/utils";
 
 import "./index.css";
+import { VStack, Text, Box, HStack, Icon } from "@chakra-ui/react";
+import { CircleX, CircleCheck } from "lucide-react";
 
 function App() {
     const [down, setDown] = useState(0);
@@ -42,145 +43,79 @@ function App() {
         !historyChecked && setHistoryChecked(true);
     };
 
+    // const greenPrimary = "#48bb78";
+    // const greenSecondary = "#c6f6d5";
+    // const redPrimary = "#e53e3e";
+    // const redSecondary = "#fed7d7";
+    const width = 500;
+    const borderRadius = "3xl";
+
     return (
-        <div className="container">
-            <h1 className="title">KTU Downdetector</h1>
-            <div className="content">
-                <div className={`header ${down ? "down" : ""}`}>
-                    {data ? (
-                        down ? (
-                            <h2>Down</h2>
-                        ) : (
-                            <h2>OK</h2>
-                        )
-                    ) : (
-                        <Skeleton
-                            width={50}
-                            height={20}
-                            baseColor="rgba(255, 255, 255, 0.50)"
-                            highlightColor="rgba(255, 255, 255, 0.75)"
-                        />
-                    )}
-                    {data ? (
-                        down ? (
-                            <p>KTU website is down!</p>
-                        ) : (
-                            <p>KTU website is up!</p>
-                        )
-                    ) : (
-                        <Skeleton
-                            width={100}
-                            height={20}
-                            baseColor="rgba(255, 255, 255, 0.50)"
-                            highlightColor="rgba(255, 255, 255, 0.75)"
-                        />
-                    )}
-                </div>
-
-                <div className="body">
-                    <ul className="status">
-                        {data ? (
-                            <LabelComponent label={"Code"} value={data.code} />
-                        ) : (
-                            <Skeleton
-                                width={50}
-                                height={15}
-                                baseColor="rgba(255, 255, 255, 0.50)"
-                                highlightColor="rgba(255, 255, 255, 0.75)"
-                            />
-                        )}
-                        {data ? (
-                            data.statusText !== "" ? (
-                                <LabelComponent
-                                    label={"Status Text"}
-                                    value={data.statusText}
-                                />
-                            ) : (
-                                <LabelComponent
-                                    label={"Status Text"}
-                                    value={"Unknown"}
-                                />
-                            )
-                        ) : (
-                            <Skeleton
-                                width={50}
-                                height={15}
-                                baseColor="rgba(255, 255, 255, 0.50)"
-                                highlightColor="rgba(255, 255, 255, 0.75)"
-                            />
-                        )}
-                        {data ? (
-                            <LabelComponent
-                                label={"Latency"}
-                                value={data.latency}
-                            />
-                        ) : (
-                            <Skeleton
-                                width={50}
-                                height={15}
-                                baseColor="rgba(255, 255, 255, 0.50)"
-                                highlightColor="rgba(255, 255, 255, 0.75)"
-                            />
-                        )}
-                    </ul>
-                </div>
-
-                <div className="history">
-                    <button
-                        className={
-                            history
-                                ? "history-button round-border"
-                                : "history-button"
-                        }
-                        onClick={handleHistoryChecked}
-                    >
-                        {history ? "X" : "History"}
-                    </button>
-                    {history && (
-                        <div className="history-body">
-                            <ul className="history-data">
-                                <li>
-                                    Last Check:{" "}
-                                    {historyData
-                                        ? `${Math.floor(
-                                              (Date.now() -
-                                                  historyData.last_check) /
-                                                  60000
-                                          )} minutes ago`
-                                        : "..."}
-                                </li>
-                                <li>
-                                    Last Down:{" "}
-                                    {historyData
-                                        ? convertTime(
-                                              historyData.last_down_time
-                                          )
-                                        : "..."}
-                                </li>
-                                <li>
-                                    Last Down Duration:
-                                    {historyData
-                                        ? `${Math.floor(
-                                              historyData.last_down_duration /
-                                                  60000
-                                          )} minutes`
-                                        : "..."}
-                                </li>
-                            </ul>
-                        </div>
-                    )}
-                </div>
-            </div>
-        </div>
+        <VStack paddingTop={10} gap={2}>
+            <Text fontSize={"3xl"} fontWeight={"bold"} color={"blue.subtle"}>
+                Down Detector
+            </Text>
+            <VStack gap={1}>
+                <Box
+                    background={down ? "red.solid" : "green.solid"}
+                    color={down ? "red.fg" : "green.fg"}
+                    borderRadius={borderRadius}
+                    padding={"20px 40px"}
+                    width={width}
+                >
+                    <HStack justifyContent={"space-between"}>
+                        <Text fontSize={"3xl"} fontWeight={"bold"}>
+                            {down ? "DOWN!" : "OK!"}
+                        </Text>
+                        <Text fontSize={"md"} fontWeight={"normal"}>
+                            {`The website is ${down ? "down" : "up"}!`}
+                        </Text>
+                    </HStack>
+                </Box>
+                <Box
+                    background={"gray.solid"}
+                    // color={"gray.fg"}
+                    borderRadius={borderRadius}
+                    padding={"20px 40px"}
+                    width={width}
+                >
+                    <StatusData
+                        title={"Status Code"}
+                        value={data ? data.code : "--"}
+                        down={down}
+                    />
+                    <StatusData
+                        title={"Message"}
+                        value={data ? data.statusText : "--"}
+                        down={down}
+                    />
+                    <StatusData
+                        title={"Latency"}
+                        value={`${data ? data.latency : "--"} ms`}
+                        down={down}
+                    />
+                </Box>
+            </VStack>
+        </VStack>
     );
 }
 
-const LabelComponent = ({ label, value }) => {
+const StatusData = ({ title, value, down }) => {
     return (
-        <p className="status-label">
-            {`${label}:`}{" "}
-            <span>{`${value} ${label === "Latency" ? "ms" : ""}`}</span>
-        </p>
+        <HStack justifyContent={"space-between"}>
+            <Text fontSize={"md"} fontWeight={"normal"}>
+                {title}
+            </Text>
+
+            <HStack>
+                <Icon size={"md"} color={down ? "red.solid" : "green.solid"}>
+                    {down ? <CircleX /> : <CircleCheck />}
+                </Icon>
+                <Text fontSize={"lg"} fontWeight={"bold"} paddingBottom={1}>
+                    {value}
+                </Text>
+            </HStack>
+        </HStack>
     );
 };
 
