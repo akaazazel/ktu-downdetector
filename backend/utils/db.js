@@ -10,6 +10,7 @@ export const serverDown = async () => {
     try {
         await redis.set("uptime:last_down_time", Date.now());
         await redis.set("uptime:last_check", Date.now());
+        await redis.set("uptime:status", 0);
     } catch (err) {
         console.log("Can't connect to Database!");
     }
@@ -20,9 +21,14 @@ export const serverUp = async () => {
         await redis.set("uptime:last_check", Date.now());
 
         const lastDown = await redis.get("uptime:last_down_time");
-        const duration = Date.now() - lastDown;
+        const status = await redis.get("uptime:status");
 
-        await redis.set("uptime:last_down_duration", duration);
+        status === 0 &&
+            (await redis.set(
+                "uptime:last_down_duration",
+                Date.now() - lastDown
+            ));
+        await redis.set("uptime:status", 1);
     } catch (err) {
         console.log("Can't connect to Database!");
     }
@@ -33,11 +39,13 @@ export const readDB = async () => {
         const lastDownTime = await redis.get("uptime:last_down_time");
         const lastDownDuration = await redis.get("uptime:last_down_duration");
         const lastCheck = await redis.get("uptime:last_check");
+        const status = await redis.get("uptime:status");
 
         return {
             last_down_time: lastDownTime,
             last_down_duration: lastDownDuration,
             last_check: lastCheck,
+            status: status,
         };
     } catch (err) {
         console.log("Can't connect to Database!");
@@ -45,6 +53,7 @@ export const readDB = async () => {
             last_down_time: null,
             last_down_duration: null,
             last_check: null,
+            status: null,
         };
     }
 };

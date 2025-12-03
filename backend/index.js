@@ -23,18 +23,20 @@ app.get("/ping", async (req, res) => {
             headers: { "User-Agent": "Mozilla/5.0" },
         });
 
-        serverUp();
-
-        res.json({ message: "Serever is up. Status updated." });
+        await serverUp();
+        return res.json({ message: "Server is up. Status updated." });
     } catch (err) {
-        try {
-            serverDown();
-        } catch (err) {
-            console.log("Cannot connect to database!");
-            res.json({ message: "Serever is down. Status can't be updated." });
-        }
+        console.error("Ping error:", err);
 
-        res.json({ message: "Serever is down. Status updated." });
+        try {
+            await serverDown();
+            return res.json({ message: "Server is down. Status updated." });
+        } catch (dbErr) {
+            console.error("Redis error:", dbErr);
+            return res.json({
+                message: "Server down, but status update failed.",
+            });
+        }
     }
 });
 
@@ -77,6 +79,7 @@ app.get("/status", async (req, res) => {
 // user side db status read
 app.get("/status/history", async (req, res) => {
     const history = await readDB();
+    console.log(history);
     res.json(history);
 });
 
