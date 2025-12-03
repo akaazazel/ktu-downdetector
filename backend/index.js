@@ -66,9 +66,9 @@ app.get("/ping", async (req, res) => {
         }
     } finally {
         await storeDB({
-            status: result.status,
-            statusText: result.statusText,
-            latency: latency,
+            status: result?.status || null,
+            statusText: result?.statusText || "ERROR",
+            latency,
         });
     }
 });
