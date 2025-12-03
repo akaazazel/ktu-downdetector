@@ -27,47 +27,42 @@ app.get("/ping", async (req, res) => {
         end = 0,
         latency = 0;
 
-    let result;
+    let result = null,
+        status = null,
+        statusText = null;
 
     try {
         start = Date.now();
-
         result = await axios.get(webUrl, {
             httpsAgent: agent,
             headers: { "User-Agent": "Mozilla/5.0" },
         });
-
         end = Date.now();
         latency = end - start;
 
-        try {
-            await serverUp();
-            return res.json({ message: "Server is up. Status updated." });
-        } catch (dbErr) {
-            console.error("Redis error:", dbErr);
-            return res.json({
-                message: "Server up, but status update failed.",
-            });
-        }
+        status = result.status;
+        statusText = result.statusText;
+
+        await serverUp();
+        return res.json({ message: "Server is up. Status updated." });
     } catch (err) {
         end = Date.now();
         latency = end - start;
 
-        console.error("Ping error:", err);
-
-        try {
-            await serverDown();
-            return res.json({ message: "Server is down. Status updated." });
-        } catch (dbErr) {
-            console.error("Redis error:", dbErr);
-            return res.json({
-                message: "Server down, but status update failed.",
-            });
+        if (err.response) {
+            status = err.response.status;
+            statusText = err.response.statusText;
+        } else {
+            status = -1;
+            statusText = "NETWORK_ERROR";
         }
+
+        await serverDown();
+        return res.json({ message: "Server is down. Status updated." });
     } finally {
         await storeDB({
-            status: result?.status || null,
-            statusText: result?.statusText || "ERROR",
+            status,
+            statusText,
             latency,
         });
     }
