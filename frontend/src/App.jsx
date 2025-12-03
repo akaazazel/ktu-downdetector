@@ -18,6 +18,7 @@ import {
     Icon,
     Button,
     Link,
+    Image,
 } from "@chakra-ui/react";
 import { CircleX, CircleCheck, ListRestart } from "lucide-react";
 
@@ -63,13 +64,7 @@ function App() {
 
     return (
         <VStack paddingTop={10} gap={4}>
-            <Text
-                fontSize={titleSize}
-                fontWeight={"bold"}
-                color={"blue.subtle"}
-            >
-                KTU Downdetector
-            </Text>
+            <Image width={isMobile ? 260 : 360} src="logo.svg" />
             <VStack gap={1}>
                 <Box
                     background={down ? "red.solid" : "green.solid"}
@@ -181,6 +176,20 @@ function App() {
                 Target:{" "}
                 <Link href="https://app.ktu.edu.in" color={"blue.600"}>
                     https://app.ktu.edu.in
+                </Link>
+            </Text>
+            <Text
+                fontSize={smallFont}
+                position={"fixed"}
+                bottom={2}
+                color={"gray.500"}
+            >
+                Developed by{" "}
+                <Link
+                    href="https://www.instagram.com/akaazazel"
+                    color={"blue.800"}
+                >
+                    akaazazel
                 </Link>
             </Text>
         </VStack>
