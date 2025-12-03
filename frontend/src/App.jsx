@@ -10,7 +10,7 @@ import { convertTime } from "./utils/utils";
 import "./index.css";
 
 function App() {
-    const [down, setDown] = useState(true);
+    const [down, setDown] = useState(0);
     const [data, setData] = useState(null);
     const [historyData, setHistoryData] = useState(null);
     const [history, setHistory] = useState(false);
@@ -22,7 +22,7 @@ function App() {
         const fetchData = async () => {
             const response = await checkUrl();
             setData(response);
-            setDown(response.down);
+            setDown(!response.status);
         };
 
         fetchData();
@@ -80,10 +80,7 @@ function App() {
                 <div className="body">
                     <ul className="status">
                         {data ? (
-                            <LabelComponent
-                                label={"Code"}
-                                value={data.status}
-                            />
+                            <LabelComponent label={"Code"} value={data.code} />
                         ) : (
                             <Skeleton
                                 width={50}
@@ -145,7 +142,11 @@ function App() {
                                 <li>
                                     Last Check:{" "}
                                     {historyData
-                                        ? convertTime(historyData.last_check)
+                                        ? `${Math.floor(
+                                              (Date.now() -
+                                                  historyData.last_check) /
+                                                  60000
+                                          )} minutes ago`
                                         : "..."}
                                 </li>
                                 <li>
