@@ -6,8 +6,19 @@ import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import { convertTime } from "./utils/utils";
 
+import { useMediaQuery } from "react-responsive";
+
 import "./index.css";
-import { VStack, Text, Box, HStack, Icon, Button } from "@chakra-ui/react";
+import {
+    VStack,
+    Text,
+    Box,
+    Stack,
+    HStack,
+    Icon,
+    Button,
+    Link,
+} from "@chakra-ui/react";
 import { CircleX, CircleCheck, ListRestart } from "lucide-react";
 
 function App() {
@@ -17,7 +28,7 @@ function App() {
     const [history, setHistory] = useState(false);
     const [historyChecked, setHistoryChecked] = useState(false);
 
-    const loaderComp = <Skeleton width={50} height={20} />;
+    const isMobile = useMediaQuery({ query: "(max-width: 540px)" });
 
     useEffect(() => {
         const fetchData = async () => {
@@ -43,40 +54,48 @@ function App() {
         !historyChecked && setHistoryChecked(true);
     };
 
-    // const greenPrimary = "#48bb78";
-    // const greenSecondary = "#c6f6d5";
-    // const redPrimary = "#e53e3e";
-    // const redSecondary = "#fed7d7";
-    const width = 500;
+    const width = isMobile ? 320 : 500;
+    const titleSize = isMobile ? "2xl" : "3xl";
+    const mediumFont = isMobile ? "sm" : "md";
+    const smallFont = isMobile ? "xs" : "sm";
     const borderRadius = "3xl";
+    const padding = isMobile ? "15px 25px" : "20px 40px";
 
     return (
-        <VStack paddingTop={10} gap={2}>
-            <Text fontSize={"3xl"} fontWeight={"bold"} color={"blue.subtle"}>
-                Down Detector
+        <VStack paddingTop={10} gap={4}>
+            <Text
+                fontSize={titleSize}
+                fontWeight={"bold"}
+                color={"blue.subtle"}
+            >
+                KTU Downdetector
             </Text>
             <VStack gap={1}>
                 <Box
                     background={down ? "red.solid" : "green.solid"}
                     color={down ? "red.fg" : "green.fg"}
                     borderRadius={borderRadius}
-                    padding={"20px 40px"}
+                    padding={padding}
                     width={width}
                 >
-                    <HStack justifyContent={"space-between"}>
-                        <Text fontSize={"3xl"} fontWeight={"bold"}>
+                    <Stack
+                        justifyContent={"space-between"}
+                        align={!isMobile && "center"}
+                        direction={isMobile && "column"}
+                    >
+                        <Text fontSize={titleSize} fontWeight={"bold"}>
                             {down ? "DOWN!" : "OK!"}
                         </Text>
-                        <Text fontSize={"md"} fontWeight={"normal"}>
+                        <Text fontSize={mediumFont} fontWeight={"normal"}>
                             {`The website is ${down ? "down" : "up"}!`}
                         </Text>
-                    </HStack>
+                    </Stack>
                 </Box>
                 <Box
                     background={"gray.solid"}
                     // color={"gray.fg"}
                     borderRadius={borderRadius}
-                    padding={"20px 40px"}
+                    padding={padding}
                     width={width}
                 >
                     <VStack align={"start"}>
@@ -84,16 +103,19 @@ function App() {
                             title={"Status Code"}
                             value={data ? data.code : "--"}
                             down={down}
+                            mediumFont={mediumFont}
                         />
                         <StatusData
                             title={"Message"}
                             value={data ? data.statusText : "--"}
                             down={down}
+                            mediumFont={mediumFont}
                         />
                         <StatusData
                             title={"Latency"}
                             value={`${data ? data.latency : "--"} ms`}
                             down={down}
+                            mediumFont={mediumFont}
                         />
                     </VStack>
                 </Box>
@@ -101,7 +123,7 @@ function App() {
                     background={"blue.100"}
                     // color={"gray.fg"}
                     borderRadius={borderRadius}
-                    padding={"20px 40px"}
+                    padding={padding}
                     width={width}
                     position={"relative"}
                 >
@@ -117,6 +139,7 @@ function App() {
                                       )} minutes ago`
                                     : "--"
                             }
+                            smallFont={smallFont}
                         />
                         <HistoryData
                             title={"Last down time"}
@@ -125,6 +148,7 @@ function App() {
                                     ? convertTime(historyData.last_down_time)
                                     : "--"
                             }
+                            smallFont={smallFont}
                         />
                         <HistoryData
                             title={"Last down duration"}
@@ -135,6 +159,7 @@ function App() {
                                       )} minutes`
                                     : "--"
                             }
+                            smallFont={smallFont}
                         />
                     </VStack>
                     <Button
@@ -144,29 +169,43 @@ function App() {
                         top={3}
                         right={3}
                         background={"blue.200"}
+                        size={mediumFont}
                     >
-                        <Icon color={"blue.800"}>
+                        <Icon color={"blue.800"} size={mediumFont}>
                             <ListRestart />
                         </Icon>
                     </Button>
                 </Box>
             </VStack>
+            <Text fontSize={smallFont}>
+                Target:{" "}
+                <Link href="https://app.ktu.edu.in" color={"blue.600"}>
+                    https://app.ktu.edu.in
+                </Link>
+            </Text>
         </VStack>
     );
 }
 
-const StatusData = ({ title, value, down }) => {
+const StatusData = ({ title, value, down, mediumFont }) => {
     return (
         <HStack justifyContent={"space-between"}>
-            <Text fontSize={"md"} fontWeight={"normal"}>
+            <Text fontSize={mediumFont} fontWeight={"normal"}>
                 {title}
             </Text>
 
             <HStack>
-                <Icon size={"md"} color={down ? "red.solid" : "green.solid"}>
+                <Icon
+                    size={mediumFont}
+                    color={down ? "red.solid" : "green.solid"}
+                >
                     {down ? <CircleX /> : <CircleCheck />}
                 </Icon>
-                <Text fontSize={"lg"} fontWeight={"bold"} paddingBottom={1}>
+                <Text
+                    fontSize={mediumFont}
+                    fontWeight={"bold"}
+                    paddingBottom={1}
+                >
                     {value}
                 </Text>
             </HStack>
@@ -174,10 +213,10 @@ const StatusData = ({ title, value, down }) => {
     );
 };
 
-const HistoryData = ({ title, value }) => {
+const HistoryData = ({ title, value, smallFont }) => {
     return (
         <HStack color={"gray.emphasized"}>
-            <Text fontSize={"sm"} fontWeight={"normal"}>
+            <Text fontSize={smallFont} fontWeight={"normal"}>
                 {`${title}:`}
             </Text>
 
@@ -188,7 +227,7 @@ const HistoryData = ({ title, value }) => {
                 >
                     {down ? <CircleX /> : <CircleCheck />}
                 </Icon> */}
-                <Text fontSize={"sm"} fontWeight={"medium"}>
+                <Text fontSize={smallFont} fontWeight={"medium"}>
                     {value}
                 </Text>
             </HStack>
