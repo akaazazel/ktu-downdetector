@@ -46,9 +46,13 @@ function App() {
         <div className="container">
             <h1 className="title">KTU Downdetector</h1>
             <div className="content">
-                <div className="header">
+                <div className={`header ${down ? "down" : ""}`}>
                     {data ? (
-                        <h2>OK</h2>
+                        down ? (
+                            <h2>Down</h2>
+                        ) : (
+                            <h2>OK</h2>
+                        )
                     ) : (
                         <Skeleton
                             width={50}
@@ -58,7 +62,11 @@ function App() {
                         />
                     )}
                     {data ? (
-                        <p>KTU website is ok</p>
+                        down ? (
+                            <p>KTU website is down!</p>
+                        ) : (
+                            <p>KTU website is up!</p>
+                        )
                     ) : (
                         <Skeleton
                             width={100}
