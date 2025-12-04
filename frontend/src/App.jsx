@@ -26,7 +26,6 @@ function App() {
     const [down, setDown] = useState(1);
     const [data, setData] = useState(null);
     const [historyData, setHistoryData] = useState(null);
-    const [history, setHistory] = useState(false);
     const [historyChecked, setHistoryChecked] = useState(false);
 
     const isMobile = useMediaQuery({ query: "(max-width: 540px)" });
@@ -51,7 +50,6 @@ function App() {
     }, [historyChecked]);
 
     const handleHistoryChecked = () => {
-        setHistory(!history);
         !historyChecked && setHistoryChecked(true);
     };
 
@@ -59,10 +57,8 @@ function App() {
     const titleSize = isMobile ? "2xl" : "3xl";
     const mediumFont = isMobile ? "sm" : "md";
     const smallFont = isMobile ? "xs" : "sm";
-    const borderRadius = "3xl";
     const padding = isMobile ? "15px 25px" : "20px 40px";
-
-    const primarySkeletonColor = down ? "red.600" : "green.600";
+    const borderRadius = "3xl";
 
     const largeSkeleton = (
         <Skeleton
@@ -157,18 +153,20 @@ function App() {
                                               historyData.last_check) /
                                               60000
                                       )} minutes ago`
-                                    : "--"
+                                    : null
                             }
                             smallFont={smallFont}
+                            refresh={historyChecked}
                         />
                         <HistoryData
                             title={"Last down time"}
                             value={
                                 historyData
                                     ? convertTime(historyData.last_down_time)
-                                    : "--"
+                                    : null
                             }
                             smallFont={smallFont}
+                            refresh={historyChecked}
                         />
                         <HistoryData
                             title={"Last down duration"}
@@ -177,9 +175,10 @@ function App() {
                                     ? `${Math.floor(
                                           historyData.last_down_duration / 60000
                                       )} minutes`
-                                    : "--"
+                                    : null
                             }
                             smallFont={smallFont}
+                            refresh={historyChecked}
                         />
                     </VStack>
                     <Button
@@ -247,7 +246,18 @@ const StatusData = ({ title, value, down, mediumFont }) => {
     );
 };
 
-const HistoryData = ({ title, value, smallFont }) => {
+const HistoryData = ({ title, value, smallFont, refresh }) => {
+    const smallSkeleton = (
+        <Skeleton
+            width={100}
+            height={3.5}
+            opacity={0}
+            bgColor={"blue.400"}
+            accentColor={"red"}
+            variant={"pulse"}
+        />
+    );
+
     return (
         <HStack color={"gray.emphasized"}>
             <Text fontSize={smallFont} fontWeight={"normal"}>
@@ -262,7 +272,11 @@ const HistoryData = ({ title, value, smallFont }) => {
                     {down ? <CircleX /> : <CircleCheck />}
                 </Icon> */}
                 <Text fontSize={smallFont} fontWeight={"medium"}>
-                    {value}
+                    {refresh && value === null
+                        ? smallSkeleton
+                        : !refresh && value === null
+                        ? "--"
+                        : value}
                 </Text>
             </HStack>
         </HStack>
