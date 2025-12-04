@@ -23,7 +23,7 @@ import "./index.css";
 import { GiLargeDress } from "react-icons/gi";
 
 function App() {
-    const [down, setDown] = useState(1);
+    const [down, setDown] = useState(0);
     const [data, setData] = useState(null);
     const [historyData, setHistoryData] = useState(null);
     const [historyChecked, setHistoryChecked] = useState(false);
@@ -83,28 +83,44 @@ function App() {
 
     return (
         <VStack paddingTop={10} gap={4}>
-            <Image width={isMobile ? 260 : 360} src="logo.svg" />
-            <VStack gap={1}>
+            <Image
+                width={isMobile ? 260 : 360}
+                src="logo.svg"
+                alt="KTU Downdetector"
+            />
+            <VStack gap={3}>
                 <Box
-                    background={down ? "red.solid" : "green.solid"}
-                    color={down ? "red.fg" : "green.fg"}
+                    bgGradient="to-b"
+                    gradientFrom={down ? "red.500" : "green.500"}
+                    gradientTo={down ? "red.600" : "green.600"}
+                    // background={down ? "red.solid" : "green.solid"}
+                    color={down ? "red.200" : "green.200"}
                     borderRadius={borderRadius}
                     padding={padding}
                     width={width}
+                    boxShadow={"0 3px 5px rgba(0, 7, 37, 0.2)"}
                 >
                     <Stack
                         justifyContent={"space-between"}
                         align={!isMobile && "center"}
                         direction={isMobile && "column"}
                     >
-                        <Text fontSize={titleSize} fontWeight={"bold"}>
-                            {data ? (down ? "DOWN!" : "OK!") : largeSkeleton}
-                        </Text>
-                        <Text fontSize={mediumFont} fontWeight={"normal"}>
-                            {data
-                                ? `The website is ${down ? "down" : "up"}!`
-                                : mediumSkeleton}
-                        </Text>
+                        {data ? (
+                            <Text fontSize={titleSize} fontWeight={"bold"}>
+                                {down ? "DOWN!" : "OK!"}
+                            </Text>
+                        ) : (
+                            largeSkeleton
+                        )}
+
+                        {data ? (
+                            <Text fontSize={mediumFont} fontWeight={"normal"}>
+                                The KTU website is{" "}
+                                {down ? "not responding" : "responding"}
+                            </Text>
+                        ) : (
+                            mediumSkeleton
+                        )}
                     </Stack>
                 </Box>
                 <Box
@@ -113,6 +129,7 @@ function App() {
                     borderRadius={borderRadius}
                     padding={padding}
                     width={width}
+                    boxShadow={"0 3px 5px rgba(0, 7, 37, 0.2)"}
                 >
                     <VStack align={"start"}>
                         <StatusData
@@ -142,6 +159,7 @@ function App() {
                     padding={padding}
                     width={width}
                     position={"relative"}
+                    boxShadow={"0 3px 5px rgba(0, 7, 37, 0.2)"}
                 >
                     <VStack align={"start"}>
                         <HistoryData
@@ -182,6 +200,7 @@ function App() {
                         />
                     </VStack>
                     <Button
+                        name="history-refresh-button"
                         onClick={handleHistoryChecked}
                         borderRadius={borderRadius}
                         position={"absolute"}
@@ -189,6 +208,7 @@ function App() {
                         right={3}
                         background={"blue.200"}
                         size={mediumFont}
+                        boxShadow={"0 3px 5px rgba(0, 7, 37, 0.2)"}
                     >
                         <Icon color={"blue.800"} size={mediumFont}>
                             <ListRestart />
